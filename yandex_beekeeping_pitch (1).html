@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нейросервисы Яндекса × Пчеловодство</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@300;400;500&family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --honey:       #F5A623;
+    --dark-honey:  #C97A0A;
+    --amber:       #E8730A;
+    --cream:       #FBF4E3;
+    --dark:        #1A1208;
+    --mid:         #3D2B0A;
+    --text:        #2C1A06;
+    --muted:       #7A5C2E;
+    --yandex-red:  #FC3F1D;
+    --white:       #FFFFFF;
+    --comb-line:   rgba(245,166,35,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Raleway', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 48px;
+    background: rgba(251,244,227,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(245,166,35,0.2);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+  .nav-logo-y {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 900;
+    color: var(--yandex-red);
+    letter-spacing: -1px;
+  }
+  .nav-logo-sep { width: 1px; height: 20px; background: var(--honey); }
+  .nav-logo-text {
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 12px; font-weight: 600; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--mid);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--amber); }
+
+  /* ─── SECTIONS ─── */
+  section {
+    min-height: 100vh;
+    padding: 120px 80px 80px;
+    position: relative;
+  }
+
+  /* ─── SLIDE 1: HERO ─── */
+  #s1 {
+    background: var(--dark);
+    display: flex; flex-direction: column; justify-content: center;
+    overflow: hidden;
+  }
+  .comb-bg {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(60deg, var(--comb-line) 0, var(--comb-line) 1px, transparent 1px, transparent 80px),
+      repeating-linear-gradient(-60deg, var(--comb-line) 0, var(--comb-line) 1px, transparent 1px, transparent 80px);
+    opacity: .6;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 400; letter-spacing: 3px;
+    color: var(--honey); text-transform: uppercase;
+    margin-bottom: 24px; opacity: .8;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 8vw, 108px);
+    font-weight: 900; line-height: .95;
+    color: var(--white);
+    position: relative; z-index: 1;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--honey);
+  }
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 18px; font-weight: 300; line-height: 1.6;
+    color: rgba(255,255,255,.6);
+    max-width: 520px; position: relative; z-index: 1;
+  }
+  .hero-cta {
+    margin-top: 48px;
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--honey); color: var(--dark);
+    font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 16px 32px;
+    border: none; cursor: pointer;
+    transition: background .2s, transform .2s;
+    text-decoration: none; position: relative; z-index: 1;
+  }
+  .hero-cta:hover { background: var(--amber); transform: translateX(4px); }
+  .hero-hex {
+    position: absolute; right: -60px; top: 50%; transform: translateY(-50%);
+    width: 600px; height: 600px; opacity: .08;
+    font-size: 400px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--honey); user-select: none;
+  }
+
+  /* ─── SLIDE 2: PROBLEM ─── */
+  #s2 {
+    background: var(--cream);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .slide-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 3px; color: var(--honey);
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .slide-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700; line-height: 1.1;
+    color: var(--dark); margin-bottom: 48px;
+  }
+  .pain-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--honey);
+    border: 1px solid var(--honey);
+  }
+  .pain-card {
+    background: var(--cream); padding: 36px 32px;
+    transition: background .2s;
+  }
+  .pain-card:hover { background: #FFF8EC; }
+  .pain-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px; font-weight: 900;
+    color: var(--honey); line-height: 1;
+    margin-bottom: 12px; opacity: .4;
+  }
+  .pain-title {
+    font-size: 16px; font-weight: 700;
+    color: var(--dark); margin-bottom: 8px;
+  }
+  .pain-text {
+    font-size: 14px; font-weight: 300; line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* ─── SLIDE 3: PRODUCT FIT ─── */
+  #s3 { background: var(--dark); color: var(--white); }
+  #s3 .slide-title { color: var(--white); }
+  .product-row {
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 0; border: 1px solid rgba(245,166,35,.3);
+    margin-bottom: 2px;
+    transition: border-color .2s;
+  }
+  .product-row:hover { border-color: var(--honey); }
+  .product-name-col {
+    padding: 32px 40px;
+    background: rgba(245,166,35,.06);
+    border-right: 1px solid rgba(245,166,35,.2);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .product-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--honey); color: var(--honey);
+    margin-bottom: 12px; width: fit-content;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700; color: var(--white);
+    line-height: 1.1;
+  }
+  .product-tagline {
+    font-size: 12px; color: rgba(255,255,255,.4);
+    margin-top: 6px; font-weight: 300;
+  }
+  .product-use-col {
+    padding: 32px 40px;
+  }
+  .use-cases { list-style: none; }
+  .use-cases li {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.06);
+    font-size: 15px; font-weight: 300; line-height: 1.5;
+    color: rgba(255,255,255,.8);
+  }
+  .use-cases li:last-child { border-bottom: none; }
+  .use-cases li::before {
+    content: '⬡';
+    color: var(--honey); font-size: 10px; margin-top: 4px; flex-shrink: 0;
+  }
+  .use-highlight {
+    font-weight: 600; color: var(--honey);
+  }
+
+  /* ─── SLIDE 4: USE CASE DEEP-DIVE ─── */
+  #s4 { background: #FFF8EC; }
+  .usecase-hero {
+    background: var(--dark);
+    padding: 48px 56px;
+    margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .usecase-hero::after {
+    content: '🐝';
+    position: absolute; right: 40px; bottom: -10px;
+    font-size: 120px; opacity: .08;
+  }
+  .uch-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; color: var(--honey);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .uch-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700; color: var(--white);
+    line-height: 1.2; margin-bottom: 16px;
+  }
+  .uch-desc {
+    font-size: 15px; font-weight: 300; color: rgba(255,255,255,.65);
+    max-width: 560px; line-height: 1.7;
+  }
+  .usecase-flow {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; background: rgba(245,166,35,.2);
+  }
+  .flow-step {
+    background: #FFF8EC; padding: 28px 24px;
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; color: var(--honey);
+    margin-bottom: 10px;
+  }
+  .flow-title {
+    font-size: 15px; font-weight: 700; color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .flow-text {
+    font-size: 13px; font-weight: 300; line-height: 1.6;
+    color: var(--muted);
+  }
+
+  /* ─── SLIDE 5: ROI ─── */
+  #s5 {
+    background: var(--dark);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #s5 .slide-title { color: var(--white); }
+  .roi-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; background: rgba(245,166,35,.2);
+    margin-bottom: 40px;
+  }
+  .roi-card {
+    background: rgba(245,166,35,.05); padding: 40px 32px;
+    text-align: center;
+  }
+  .roi-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px; font-weight: 900; color: var(--honey);
+    line-height: 1;
+  }
+  .roi-unit {
+    font-size: 28px; font-weight: 300; color: var(--honey);
+  }
+  .roi-label {
+    font-size: 13px; font-weight: 300; color: rgba(255,255,255,.5);
+    margin-top: 8px; line-height: 1.5;
+  }
+  .roi-quote {
+    border-left: 3px solid var(--honey);
+    padding: 20px 32px;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-style: italic;
+    color: rgba(255,255,255,.7); line-height: 1.6;
+    max-width: 700px;
+  }
+
+  /* ─── SLIDE 6: OBJECTIONS ─── */
+  #s6 { background: var(--cream); }
+  .obj-table { width: 100%; border-collapse: collapse; }
+  .obj-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 12px 24px; text-align: left;
+    background: var(--dark); color: var(--honey);
+    font-weight: 400;
+  }
+  .obj-table td {
+    padding: 20px 24px; border-bottom: 1px solid rgba(245,166,35,.15);
+    vertical-align: top;
+  }
+  .obj-table tr:hover td { background: #FFF8EC; }
+  .obj-text {
+    font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.6;
+  }
+  .ans-text {
+    font-size: 14px; color: var(--text); font-weight: 400; line-height: 1.6;
+  }
+  .ans-text strong { color: var(--amber); font-weight: 700; }
+
+  /* ─── SLIDE 7: CREATIVE CAMPAIGNS ─── */
+  #s7 { background: #FFF8EC; }
+  .campaign-card {
+    border: 1px solid rgba(245,166,35,.3);
+    margin-bottom: 32px; overflow: hidden;
+    transition: border-color .2s, transform .2s;
+  }
+  .campaign-card:hover { border-color: var(--honey); transform: translateY(-2px); }
+  .cc-header {
+    background: var(--dark);
+    padding: 28px 40px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .cc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; color: var(--honey);
+  }
+  .cc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700; color: var(--white);
+    margin: 8px 0 6px;
+  }
+  .cc-subtitle {
+    font-size: 14px; font-weight: 300; color: rgba(255,255,255,.5);
+  }
+  .cc-budget {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--honey);
+    background: rgba(245,166,35,.1);
+    border: 1px solid rgba(245,166,35,.3);
+    padding: 6px 14px; white-space: nowrap; margin-top: 4px;
+  }
+  .cc-body {
+    padding: 32px 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  }
+  .cc-col-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; color: var(--honey);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .cc-list { list-style: none; }
+  .cc-list li {
+    font-size: 13px; font-weight: 300; line-height: 1.7;
+    color: var(--muted); padding: 4px 0;
+    border-bottom: 1px dashed rgba(245,166,35,.2);
+  }
+  .cc-list li:last-child { border-bottom: none; }
+  .cc-list li::before {
+    content: '→ '; color: var(--amber); font-weight: 600;
+  }
+  .cc-goal-block {
+    padding: 20px 40px 28px;
+    background: rgba(245,166,35,.05);
+    border-top: 1px solid rgba(245,166,35,.15);
+    display: flex; gap: 40px; align-items: flex-start;
+  }
+  .cc-goal-item { flex: 1; }
+  .cc-goal-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; color: var(--honey);
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .cc-goal-value {
+    font-size: 13px; font-weight: 600; color: var(--dark); line-height: 1.5;
+  }
+
+  /* ─── SLIDE 8: NEXT STEPS ─── */
+  #s8 {
+    background: var(--dark);
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start;
+  }
+  .steps-row {
+    display: flex; gap: 2px; margin-top: 40px; width: 100%;
+    background: rgba(245,166,35,.2);
+  }
+  .step-col {
+    flex: 1; background: rgba(245,166,35,.04);
+    padding: 36px 28px;
+  }
+  .step-week {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; color: var(--honey);
+    margin-bottom: 14px;
+  }
+  .step-title {
+    font-size: 16px; font-weight: 700; color: var(--white);
+    margin-bottom: 10px;
+  }
+  .step-list { list-style: none; }
+  .step-list li {
+    font-size: 13px; font-weight: 300; line-height: 1.7;
+    color: rgba(255,255,255,.5); border-bottom: 1px solid rgba(255,255,255,.05);
+    padding: 6px 0;
+  }
+  .final-cta-block {
+    margin-top: 56px; border-top: 1px solid rgba(245,166,35,.2);
+    padding-top: 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+  }
+  .final-slogan {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight: 700; color: var(--white);
+    line-height: 1.2;
+  }
+  .final-slogan em { color: var(--honey); font-style: italic; }
+  .final-btn {
+    background: var(--honey); color: var(--dark);
+    font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 18px 36px;
+    border: none; cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .final-btn:hover { background: var(--amber); transform: translateX(4px); }
+
+  /* ─── DIVIDERS ─── */
+  .section-sep {
+    width: 40px; height: 3px;
+    background: var(--honey); margin: 0 0 32px;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim { animation: fadeUp .6s ease both; }
+  .anim-d1 { animation-delay: .1s; }
+  .anim-d2 { animation-delay: .25s; }
+  .anim-d3 { animation-delay: .4s; }
+  .anim-d4 { animation-delay: .55s; }
+
+  /* ─── SLIDE INDICATOR ─── */
+  .slide-id {
+    position: absolute; right: 48px; bottom: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: 2px;
+  }
+  .slide-id-dark {
+    color: rgba(0,0,0,.15);
+  }
+
+  /* ─── HIGHLIGHT BOX ─── */
+  .highlight-box {
+    background: var(--honey); color: var(--dark);
+    padding: 24px 32px; margin: 32px 0;
+    font-size: 16px; font-weight: 600; line-height: 1.6;
+  }
+
+  /* ─── TABLE OF CONTENTS ─── */
+  .toc {
+    display: flex; gap: 2px; margin-top: 40px;
+    background: rgba(245,166,35,.15);
+  }
+  .toc-item {
+    flex: 1; padding: 20px 20px;
+    background: var(--cream); cursor: pointer;
+    transition: background .2s;
+    text-decoration: none;
+    display: block;
+  }
+  .toc-item:hover { background: #FFF0CC; }
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; color: var(--honey);
+    margin-bottom: 6px;
+  }
+  .toc-title { font-size: 13px; font-weight: 600; color: var(--dark); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-y">Я</div>
+    <div class="nav-logo-sep"></div>
+    <div class="nav-logo-text">Нейросервисы</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#s2">Боль рынка</a></li>
+    <li><a href="#s3">Продукты</a></li>
+    <li><a href="#s5">ROI</a></li>
+    <li><a href="#s7">Кампании</a></li>
+    <li><a href="#s8">Следующий шаг</a></li>
+  </ul>
+</nav>
+
+
+<!-- ═══ СЛАЙД 1: HERO ═══ -->
+<section id="s1">
+  <div class="comb-bg"></div>
+  <div class="hero-hex">⬡</div>
+
+  <div class="hero-tag anim anim-d1">Нейросервисы Яндекса × Пчеловодческая индустрия</div>
+  <h1 class="hero-title anim anim-d2">
+    Умный<br>
+    <em>улей</em><br>
+    начинается<br>
+    с умного ПО
+  </h1>
+  <p class="hero-sub anim anim-d3">
+    Как Алиса Про и Нейроюрист помогают пчеловодческим предприятиям 
+    перестать тонуть в операционке и заниматься тем, что важно.
+  </p>
+  <a href="#s2" class="hero-cta anim anim-d4">
+    Начать презентацию →
+  </a>
+  <div class="slide-id">01 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 2: СОДЕРЖАНИЕ ═══ -->
+<section id="s1b" style="min-height:auto; padding: 80px 80px 60px; background: var(--cream);">
+  <div class="slide-label">Маршрут презентации</div>
+  <h2 class="slide-title" style="margin-bottom: 0;">О чём поговорим сегодня</h2>
+  <div class="toc">
+    <a href="#s2" class="toc-item">
+      <div class="toc-num">01</div>
+      <div class="toc-title">Боль рынка пчеловодства</div>
+    </a>
+    <a href="#s3" class="toc-item">
+      <div class="toc-num">02</div>
+      <div class="toc-title">Наши продукты — ваше решение</div>
+    </a>
+    <a href="#s4" class="toc-item">
+      <div class="toc-num">03</div>
+      <div class="toc-title">Use-case: типовой день с ИИ</div>
+    </a>
+    <a href="#s5" class="toc-item">
+      <div class="toc-num">04</div>
+      <div class="toc-title">Цифры и ROI</div>
+    </a>
+    <a href="#s6" class="toc-item">
+      <div class="toc-num">05</div>
+      <div class="toc-title">Типичные возражения</div>
+    </a>
+    <a href="#s7" class="toc-item">
+      <div class="toc-num">06</div>
+      <div class="toc-title">3 кампании «захвата» рынка</div>
+    </a>
+    <a href="#s8" class="toc-item">
+      <div class="toc-num">07</div>
+      <div class="toc-title">Следующие шаги</div>
+    </a>
+  </div>
+</section>
+
+
+<!-- ═══ СЛАЙД 2: БОЛЬ РЫНКА ═══ -->
+<section id="s2">
+  <div class="slide-label">01 — Боль рынка</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title">
+    Пчеловодство — это<br>живой бизнес<br>
+    с нежелательными<br>«роями» проблем
+  </h2>
+
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-num">01</div>
+      <div class="pain-title">Бумаги кусают больнее пчёл</div>
+      <div class="pain-text">Ветеринарные журналы, договоры на поставку, сертификаты на мёд, фитосанитарные документы — каждый сезон стопки бумаг растут быстрее, чем пчелиные семьи.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">02</div>
+      <div class="pain-title">Юридическая «слепота»</div>
+      <div class="pain-text">Ветеринарное законодательство, требования Роспотребнадзора, экспортные ограничения на продукты пчеловодства — нормативка обновляется, а специального юриста нет и не будет.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">03</div>
+      <div class="pain-title">Сезонная перегрузка персонала</div>
+      <div class="pain-text">В разгар медосбора один человек совмещает бухгалтера, кладовщика и менеджера по продажам. Звонки от оптовиков, вопросы розничных покупателей — поддержка захлёбывается.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">04</div>
+      <div class="pain-title">Знания в голове, не в системе</div>
+      <div class="pain-text">Опытный пасечник держит технологии, цены, рецептуры и историю клиентов в памяти. Болезнь, отпуск или уход — и компания теряет критические данные.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">05</div>
+      <div class="pain-title">Дорогой профессиональный совет</div>
+      <div class="pain-text">Консультация юриста, бухгалтера или технолога — это время и деньги. Малый и средний пчелобизнес часто принимает решения «на глазок», что выходит дороже.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">06</div>
+      <div class="pain-title">Недоверие к «цифре»</div>
+      <div class="pain-text">Рынок традиционный. «Мы так работали 20 лет» — реальное возражение. Порог входа в технологии должен быть нулевым, а польза — ощутимой с первого дня.</div>
+    </div>
+  </div>
+  <div class="slide-id slide-id-dark">02 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 3: ПРОДУКТЫ ═══ -->
+<section id="s3">
+  <div class="slide-label">02 — Наши продукты</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title">Два инструмента.<br>Конкретная польза.</h2>
+
+  <div class="product-row">
+    <div class="product-name-col">
+      <div class="product-badge">Алиса Про</div>
+      <div class="product-name">Корпоративная<br>база знаний + ИИ</div>
+      <div class="product-tagline">Ваш эксперт доступен 24/7</div>
+    </div>
+    <div class="product-use-col">
+      <ul class="use-cases">
+        <li><span><span class="use-highlight">База знаний пасеки:</span> загрузите технологические регламенты, рецептуры, стандарты — сотрудники найдут ответ за секунды, а не звонят руководителю.</span></li>
+        <li><span><span class="use-highlight">Онбординг новых сотрудников:</span> сезонный персонал быстро входит в курс дела через общий проект с инструкциями, видео, FAQ.</span></li>
+        <li><span><span class="use-highlight">Маркетинг и контент:</span> загрузите описания продукции — ИИ помогает писать тексты для карточек товаров, постов, коммерческих предложений.</span></li>
+        <li><span><span class="use-highlight">Анализ закупочных КП:</span> сравните несколько предложений поставщиков в одном чате, не переключаясь между таблицами.</span></li>
+        <li><span><span class="use-highlight">Работа с аудио/видео:</span> загрузите записи совещаний или семинаров по пчеловодству — получите структурированный конспект.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="product-row" style="margin-top: 4px;">
+    <div class="product-name-col">
+      <div class="product-badge">Нейроюрист</div>
+      <div class="product-name">ИИ-юрист<br>по российскому праву</div>
+      <div class="product-tagline">Ссылки на законы, не на «помогите»</div>
+    </div>
+    <div class="product-use-col">
+      <ul class="use-cases">
+        <li><span><span class="use-highlight">Проверка договоров с оптовиками:</span> ИИ проверит типовой дистрибьюторский договор и укажет на рискованные клаузулы.</span></li>
+        <li><span><span class="use-highlight">Ответ на претензию покупателя:</span> клиент недоволен качеством — Нейроюрист за минуты подберёт правовую позицию со ссылкой на ЗОЗПП.</span></li>
+        <li><span><span class="use-highlight">Требования к маркировке мёда:</span> ГОСТ, Технический регламент ТС, Честный Знак — получайте актуальные требования с источниками, а не из Telegram-чатов.</span></li>
+        <li><span><span class="use-highlight">Ветеринарное законодательство:</span> вопросы по ветсвидетельствам, ВетИС, экспорту — Нейроюрист знает иерархию источников и даст точный ответ.</span></li>
+        <li><span><span class="use-highlight">Трудовые отношения:</span> сезонные договоры, оформление пасечников — снижение риска трудовых споров без найма юриста в штат.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top: 32px;">
+    💡 Рекомендация для этой индустрии: начинать с <strong>Алисы Про</strong> (быстрое внедрение, видимый результат с первой недели) + <strong>Нейроюрист</strong> для хозяйств с оборотом от 5 млн ₽, которые работают с оптовиками и экспортом.
+  </div>
+  <div class="slide-id">03 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 4: USE CASE ═══ -->
+<section id="s4">
+  <div class="slide-label">03 — Типовой рабочий день</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title" style="color: var(--dark);">
+    Как выглядит<br>
+    один день на пасеке<br>
+    с Нейросервисами
+  </h2>
+
+  <div class="usecase-hero">
+    <div class="uch-tag">Сценарий — средний пчелохолдинг, 300 семей, оптовые продажи</div>
+    <div class="uch-title">«Медовый четверг»: от тревожного утра<br>к спокойному вечеру</div>
+    <div class="uch-desc">Оптовый покупатель прислал замечания по договору. Новый сотрудник вышел на смену. Розничный клиент задаёт вопросы про состав и маркировку. Ничего необычного. Но без ИИ — это 4 часа стресса.</div>
+  </div>
+
+  <div class="usecase-flow">
+    <div class="flow-step">
+      <div class="flow-num">09:00</div>
+      <div class="flow-title">Договор от оптовика</div>
+      <div class="flow-text">Загружаете PDF в Нейроюрист. За 2 минуты — анализ пунктов об ответственности, гарантийных обязательствах и форс-мажоре. Со ссылками на ГК РФ.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">10:30</div>
+      <div class="flow-title">Выход нового сотрудника</div>
+      <div class="flow-text">Открываете общий проект в Алисе Про. Сотрудник самостоятельно читает инструкции, смотрит видео, задаёт вопросы ИИ — без вашего участия.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">14:00</div>
+      <div class="flow-title">Вопросы по маркировке</div>
+      <div class="flow-text">Розничный клиент спрашивает про Честный Знак и требования к этикетке. Нейроюрист даёт точный ответ с ссылками на Технический регламент за 30 секунд.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">17:00</div>
+      <div class="flow-title">Коммерческое предложение</div>
+      <div class="flow-text">Просите Алису Про составить КП для нового покупателя на основе ваших прайсов и описаний. Редактируете 10 минут — отправляете.</div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top: 32px; background: var(--dark); color: var(--honey);">
+    Итог: задачи, которые раньше съедали 4–5 часов, заняли меньше 1 часа. Руководитель освободился для работы с пасекой, а не с бумагами.
+  </div>
+  <div class="slide-id slide-id-dark">04 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 5: ROI ═══ -->
+<section id="s5">
+  <div class="slide-label">04 — Экономика</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title">Цифры, которые<br>говорят сами за себя</h2>
+
+  <div class="roi-grid">
+    <div class="roi-card">
+      <div class="roi-num">−20<span class="roi-unit">%</span></div>
+      <div class="roi-label">Среднее время обработки<br>клиентских обращений<br><em style="color:rgba(245,166,35,.5); font-size:11px;">(реальные кейсы Нейросаппорта)</em></div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-num">40<span class="roi-unit">%</span></div>
+      <div class="roi-label">Рутинных юридических задач<br>закрывает Нейроюрист<br>без участия юриста</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-num">×3</div>
+      <div class="roi-label">Быстрее онбординг<br>сезонного персонала<br>с корпоративной базой знаний</div>
+    </div>
+  </div>
+
+  <div class="roi-quote">
+    «Нейроюрист не просто цитирует нормы, а демонстрирует понимание юридической логики» — Director of Legal, Яндекс. Для пчеловода это значит: можно спросить «а что мне за это будет?» — и получить честный ответ.
+  </div>
+
+  <div style="margin-top: 40px; border: 1px solid rgba(245,166,35,.2); padding: 32px 40px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--honey); margin-bottom: 20px;">ПРИМЕР РАСЧЁТА ДЛЯ ПЧЕЛОХОЗЯЙСТВА</div>
+    <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; background: rgba(245,166,35,.15);">
+      <div style="background: rgba(245,166,35,.05); padding: 20px;">
+        <div style="font-size: 11px; color: rgba(255,255,255,.4); margin-bottom: 4px;">Потеря времени в месяц</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--white);">~40 ч</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,.3);">на юр. вопросы и бумаги</div>
+      </div>
+      <div style="background: rgba(245,166,35,.05); padding: 20px;">
+        <div style="font-size: 11px; color: rgba(255,255,255,.4); margin-bottom: 4px;">Стоимость часа владельца</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--white);">~2 000 ₽</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,.3);">оценка альтернативной стоим.</div>
+      </div>
+      <div style="background: rgba(245,166,35,.05); padding: 20px;">
+        <div style="font-size: 11px; color: rgba(255,255,255,.4); margin-bottom: 4px;">Потери = экономия с ИИ</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--honey);">80 000 ₽</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,.3);">в месяц при −50% нагрузки</div>
+      </div>
+      <div style="background: rgba(245,166,35,.1); padding: 20px; border: 1px solid rgba(245,166,35,.3);">
+        <div style="font-size: 11px; color: var(--honey); margin-bottom: 4px;">Подписка Алиса Про + Нейроюрист</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--honey);">от ≪ 80К</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,.4);">ROI с первого месяца</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-id">05 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 6: ВОЗРАЖЕНИЯ ═══ -->
+<section id="s6">
+  <div class="slide-label">05 — Работа с возражениями</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title">Когда клиент<br>сомневается:<br>готовые ответы</h2>
+
+  <table class="obj-table">
+    <thead>
+      <tr>
+        <th style="width:36%">Возражение</th>
+        <th>Ответ менеджера</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="obj-text">«Мы небольшое хозяйство, нам это не нужно»</div></td>
+        <td><div class="ans-text">Именно небольшим хозяйствам нет смысла держать штатного юриста или HR. <strong>Алиса Про стартует бесплатно</strong> — попробуйте на конкретной задаче: загрузите свой прайс и попросите ИИ написать КП для нового покупателя.</div></td>
+      </tr>
+      <tr>
+        <td><div class="obj-text">«У нас нет технического специалиста для внедрения»</div></td>
+        <td><div class="ans-text">Для подключения <strong>не нужны технические специалисты</strong>. Алиса Про — это веб-интерфейс: зарегистрировались, загрузили файлы, позвали коллег. Нейроюрист — аналогично. Мы проведём онбординг за 30 минут.</div></td>
+      </tr>
+      <tr>
+        <td><div class="obj-text">«Боюсь, что данные уйдут конкурентам»</div></td>
+        <td><div class="ans-text">Данные компании <strong>не используются для обучения моделей</strong>. Для чувствительных данных есть on-premise вариант — развёртывание на вашем сервере. Яндекс — <strong>российское ПО</strong>, реестр Минцифры.</div></td>
+      </tr>
+      <tr>
+        <td><div class="obj-text">«ИИ ошибается, я не могу на него полагаться в юридических вопросах»</div></td>
+        <td><div class="ans-text">Нейроюрист <strong>всегда указывает источник</strong> — конкретную статью закона, номер постановления. Вы видите, откуда ответ. Это не замена юриста для суда, это помощник для ежедневных вопросов — и он экономит 40% юр. работы.</div></td>
+      </tr>
+      <tr>
+        <td><div class="obj-text">«Сейчас не время, начнём после сезона»</div></td>
+        <td><div class="ans-text">Именно <strong>в сезон нагрузка максимальная</strong> — и именно тогда ИИ-поддержка даёт наибольший эффект. Предлагаю пилот на 2 недели: загрузим базу знаний вместе, вы оцените ценность в боевых условиях.</div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="slide-id slide-id-dark">06 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 7: 3 КАМПАНИИ ═══ -->
+<section id="s7">
+  <div class="slide-label">06 — Стратегия захвата рынка</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title" style="color: var(--dark);">3 кампании, чтобы<br>«опылить» индустрию</h2>
+
+  <!-- КАМПАНИЯ 1 -->
+  <div class="campaign-card">
+    <div class="cc-header">
+      <div>
+        <div class="cc-num">КАМПАНИЯ 01 / ЛИД-МАГНИТ</div>
+        <div class="cc-title">«Юридический помощник пасечника»</div>
+        <div class="cc-subtitle">Бесплатный интерактивный справочник пчеловода по российскому праву</div>
+      </div>
+      <div class="cc-budget">Бюджет: 60 000 ₽</div>
+    </div>
+    <div class="cc-body">
+      <div>
+        <div class="cc-col-title">Идея и формат</div>
+        <ul class="cc-list">
+          <li>Лендинг с бесплатным Telegram-ботом на базе Нейроюриста</li>
+          <li>Бот отвечает на 10 бесплатных юр. вопросов в месяц</li>
+          <li>Вопросы специфические: маркировка мёда, ветеринарные требования, трудовые договоры с пасечниками</li>
+          <li>После 10 вопросов — CTA на полную подписку</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cc-col-title">Ресурсы и план</div>
+        <ul class="cc-list">
+          <li>Разработка Telegram-бота на API Нейроюриста: 1 разработчик, 2 недели</li>
+          <li>Лендинг + SEO-статьи под запросы «требования к мёду 2025», «маркировка пчелопродуктов»</li>
+          <li>Посев в Telegram-каналах пчеловодов (есть аудитория 50К+)</li>
+          <li>Таргетированная реклама в ВКонтакте на сообщества пчеловодов</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cc-col-title">Распределение бюджета</div>
+        <ul class="cc-list">
+          <li>Разработка бота и лендинга: 30 000 ₽</li>
+          <li>Реклама ВКонтакте + посевы: 20 000 ₽</li>
+          <li>Копирайт и SEO-контент: 10 000 ₽</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cc-goal-block">
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Цель кампании</div>
+        <div class="cc-goal-value">Формирование базы лидов — владельцев пчелохозяйств, которые уже «потрогали» продукт</div>
+      </div>
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Ожидаемый результат</div>
+        <div class="cc-goal-value">500–1 000 квалифицированных лидов за 3 месяца, конверсия в платных пользователей 5–10%</div>
+      </div>
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Срок реализации</div>
+        <div class="cc-goal-value">6–8 недель от старта до первых лидов</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- КАМПАНИЯ 2 -->
+  <div class="campaign-card">
+    <div class="cc-header">
+      <div>
+        <div class="cc-num">КАМПАНИЯ 02 / ЗАКРЫТОЕ МЕРОПРИЯТИЕ</div>
+        <div class="cc-title">«Цифровая пасека»</div>
+        <div class="cc-subtitle">Однодневный воркшоп для владельцев пчелохозяйств на отраслевом форуме</div>
+      </div>
+      <div class="cc-budget">Бюджет: 90 000 ₽</div>
+    </div>
+    <div class="cc-body">
+      <div>
+        <div class="cc-col-title">Идея и формат</div>
+        <ul class="cc-list">
+          <li>Партнёрство с крупным отраслевым событием: «АпиРоссия», «МедФорум» или региональные пасечные выставки</li>
+          <li>Закрытый воркшоп «ИИ для пчеловода» — 4 часа, 30–50 участников</li>
+          <li>Живые демо: загружаем документы клиента прямо на сессии, ИИ отвечает на его реальные вопросы</li>
+          <li>Каждый участник уходит с готовой базой знаний под свою пасеку</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cc-col-title">Программа воркшопа</div>
+        <ul class="cc-list">
+          <li>10:00 — «Где теряет деньги пчеловод» (боль-аудит)</li>
+          <li>11:00 — Демо Алисы Про: база знаний за 20 минут</li>
+          <li>12:00 — Демо Нейроюриста: ваш договор под лупой</li>
+          <li>13:00 — Практика: каждый создаёт свой первый проект</li>
+          <li>14:00 — Q&A + специальные условия для участников</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cc-col-title">Распределение бюджета</div>
+        <ul class="cc-list">
+          <li>Аренда зала / взнос на партнёрство с форумом: 40 000 ₽</li>
+          <li>Материалы, мерч, кейтеринг: 25 000 ₽</li>
+          <li>Промо и анонсирование: 15 000 ₽</li>
+          <li>Фото/видео контент: 10 000 ₽</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cc-goal-block">
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Цель кампании</div>
+        <div class="cc-goal-value">Прямые горячие лиды с максимальной конверсией. «Потрогали руками» = готовы платить</div>
+      </div>
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Ожидаемый результат</div>
+        <div class="cc-goal-value">30–50 участников, конверсия 20–30% в платных клиентов за 2 недели после воркшопа</div>
+      </div>
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Бонус</div>
+        <div class="cc-goal-value">Видеоконтент с мероприятия → 3–5 кейсов для дальнейшего контент-маркетинга в отрасли</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- КАМПАНИЯ 3 -->
+  <div class="campaign-card">
+    <div class="cc-header">
+      <div>
+        <div class="cc-num">КАМПАНИЯ 03 / СЕГМЕНТИРОВАННАЯ РЕКЛАМА</div>
+        <div class="cc-title">«Сезонный рой»</div>
+        <div class="cc-subtitle">Контекстная и таргетированная кампания в пиковые моменты боли</div>
+      </div>
+      <div class="cc-budget">Бюджет: 50 000 ₽</div>
+    </div>
+    <div class="cc-body">
+      <div>
+        <div class="cc-col-title">Идея и механика</div>
+        <ul class="cc-list">
+          <li>Запускаем рекламу в моменты пиковой боли: апрель (подготовка к сезону), июль (медосбор), сентябрь (реализация урожая)</li>
+          <li>Контекст в Яндекс Директ: «требования к мёду», «маркировка мёда ГОСТ», «договор поставки мёда», «ветсвидетельство пчёлы»</li>
+          <li>Таргет в ВК: сообщества пчеловодов (50К+), фермерские союзы, сельхозкооперативы</li>
+          <li>Разные объявления под разные сегменты: малые пасеки vs. средние хозяйства vs. кооперативы</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cc-col-title">Сегменты и месседжи</div>
+        <ul class="cc-list">
+          <li><strong>Малая пасека (до 50 семей):</strong> «Тратите время на бумаги? Алиса Про — бесплатно»</li>
+          <li><strong>Среднее хозяйство (50–500 семей):</strong> «Договор с оптовиком за 2 минуты — Нейроюрист»</li>
+          <li><strong>Кооператив:</strong> «Общая база знаний для всего союза — Алиса Про для команды»</li>
+          <li>Ретаргетинг по посетителям лендинга из Кампании 1</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cc-col-title">Распределение бюджета</div>
+        <ul class="cc-list">
+          <li>Яндекс Директ (контекст): 25 000 ₽</li>
+          <li>ВКонтакте таргет: 15 000 ₽</li>
+          <li>Креативы и тексты объявлений: 10 000 ₽</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cc-goal-block">
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Цель кампании</div>
+        <div class="cc-goal-value">Массовая осведомлённость + трафик на лендинг. Топ ума в индустрии</div>
+      </div>
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Ожидаемый результат</div>
+        <div class="cc-goal-value">2 000–5 000 переходов на лендинг, 150–300 регистраций в Алисе Про за 3 месяца</div>
+      </div>
+      <div class="cc-goal-item">
+        <div class="cc-goal-label">Синергия</div>
+        <div class="cc-goal-value">Работает в паре с Кампанией 1 (ретаргетинг) и Кампанией 2 (анонс воркшопов)</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background: var(--dark); padding: 32px 40px; margin-top: 8px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--honey); margin-bottom: 16px;">ИТОГО ПО ТРЁМ КАМПАНИЯМ</div>
+    <div style="display: flex; gap: 40px; align-items: center;">
+      <div style="flex:1">
+        <div style="font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 4px;">Общий бюджет</div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--honey);">200 000 ₽</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 4px;">Ожидаемый охват</div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--white);">50 000+</div>
+        <div style="font-size: 12px; color: rgba(255,255,255,.3);">уникальных контактов в индустрии</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 4px;">Прогноз лидов</div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--white);">600–1300</div>
+        <div style="font-size: 12px; color: rgba(255,255,255,.3);">квалифицированных за 3 месяца</div>
+      </div>
+      <div style="flex:2; border-left: 1px solid rgba(245,166,35,.2); padding-left: 40px;">
+        <div style="font-size: 14px; font-weight: 300; color: rgba(255,255,255,.6); line-height: 1.7;">
+          Кампании выстроены в воронку: <strong style="color: var(--honey);">осведомлённость</strong> (Кампания 3) → <strong style="color: var(--honey);">вовлечение</strong> (Кампания 1) → <strong style="color: var(--honey);">конверсия</strong> (Кампания 2). Каждая работает самостоятельно и усиливает остальные.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-id slide-id-dark">07 / 08</div>
+</section>
+
+
+<!-- ═══ СЛАЙД 8: NEXT STEPS ═══ -->
+<section id="s8">
+  <div class="slide-label">07 — Следующий шаг</div>
+  <div class="section-sep"></div>
+  <h2 class="slide-title">От разговора<br>к результату</h2>
+
+  <div class="steps-row">
+    <div class="step-col">
+      <div class="step-week">НЕДЕЛЯ 1</div>
+      <div class="step-title">Пилотный запуск</div>
+      <ul class="step-list">
+        <li>Регистрация в Алисе Про</li>
+        <li>Загрузка 3–5 ключевых документов компании</li>
+        <li>Первый тест с реальным вопросом</li>
+        <li>Онбординг команды — 30 минут</li>
+      </ul>
+    </div>
+    <div class="step-col">
+      <div class="step-week">НЕДЕЛЯ 2–3</div>
+      <div class="step-title">Оценка эффекта</div>
+      <ul class="step-list">
+        <li>Тест Нейроюриста на реальном договоре</li>
+        <li>Замер времени на типовые задачи</li>
+        <li>Обратная связь от команды</li>
+        <li>Корректировка базы знаний</li>
+      </ul>
+    </div>
+    <div class="step-col">
+      <div class="step-week">МЕСЯЦ 2</div>
+      <div class="step-title">Масштабирование</div>
+      <ul class="step-list">
+        <li>Выбор оптимального тарифа</li>
+        <li>Интеграция с Яндекс 360 (при необходимости)</li>
+        <li>Расширение базы знаний</li>
+        <li>Подключение дополнительных сотрудников</li>
+      </ul>
+    </div>
+    <div class="step-col">
+      <div class="step-week">МЕСЯЦ 3+</div>
+      <div class="step-title">Результат</div>
+      <ul class="step-list">
+        <li>Документированный ROI</li>
+        <li>Готовый кейс для партнёров</li>
+        <li>Обсуждение участия в воркшопе «Цифровая пасека»</li>
+        <li>Расчёт индивидуального предложения</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="final-cta-block">
+    <div class="final-slogan">
+      Рой начинается<br>с одной <em>пчелы.</em><br>Трансформация — с одного<br><em>демо.</em>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-end;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,.35); letter-spacing: 1px; text-align: right;">
+        Нейросервисы Яндекса<br>
+        neuroservices.ya.ru
+      </div>
+      <button class="final-btn">Запросить демо →</button>
+      <div style="font-size: 12px; color: rgba(255,255,255,.25);">Алиса Про доступна бесплатно прямо сейчас</div>
+    </div>
+  </div>
+  <div class="slide-id">08 / 08</div>
+</section>
+
+</body>
+</html>
